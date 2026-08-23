@@ -12,8 +12,11 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@ant-design/icons": "^6.3.2",
+    "@ant-design/pro-components": "^2.8.10",
+    "@dnd-kit/react": "^0.5.0",
     "@tailwindcss/vite": "^4.3.3",
-    "antd": "^6.6.1",
+    "antd": "^5.29.3",
     "firebase": "^12.18.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

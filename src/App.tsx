@@ -1,28 +1,31 @@
-import './App.css'
+import { Flex, Spin } from 'antd'
+import AppShell from './components/AppShell'
+import SignInScreen from './components/SignInScreen'
 import { useAuth } from './hooks/useAuth'
-import { signIn, signOutUser } from './lib/auth'
+import Content from './components/Content'
 
+/**
+ * Auth gate. Owns the three top-level states and nothing else — the shell
+ * assumes a signed-in user, so it never has to branch on one.
+ */
 function App() {
   const { user, loading } = useAuth()
 
-  if (loading) return <p>Checking sign-in…</p>
-
-  if (!user) {
+  if (loading) {
     return (
-      <button type="button" onClick={() => void signIn()}>
-        Sign in with Google
-      </button>
+      <Flex className="h-dvh" align="center" justify="center">
+        <Spin size="large" tip="Checking sign-in…">
+          <div className="p-6" />
+        </Spin>
+      </Flex>
     )
   }
 
-  return (
-    <div>
-      <p>Signed in as {user.displayName ?? user.email}</p>
-      <button type="button" onClick={() => void signOutUser()}>
-        Sign out
-      </button>
-    </div>
-  )
+  if (!user) return <SignInScreen />
+
+  return <AppShell user={user}>
+    <Content />
+  </AppShell>
 }
 
 export default App
