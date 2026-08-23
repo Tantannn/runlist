@@ -10,7 +10,7 @@ by hand.
 
 ## The rules
 
-1. **Two hours a week is the floor, not the target.** Weekend morning, never after work. Run long when a session is going well; cap near four hours in a sitting and six in a week. Raise the floor only after four unbroken weeks.
+1. **Three hours a week on this repo.** One weekend block. Two hours is the floor for a bad week. The rest of your practice budget lives at work — see the plan in `../notes/slow-rebuild.html`.
 2. **AI off inside that block.** Docs open, Stack Overflow open, AI closed.
    Everywhere else in your life it stays on — this is the one zone.
 3. **Miss a week → resume, don't restart.**
