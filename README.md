@@ -176,12 +176,16 @@ Capacitor wraps the same build in a native Android shell. Needs JDK 17+ and
 Android Studio — about 10GB of tooling, so install it before the session rather
 than during it.
 
+```bash
+npm i @capacitor/core @capacitor/cli @capacitor/android
+npx cap init
+npm run build && npx cap add android && npx cap open android
+```
 
-
-**The trap that will eat a session if you meet it cold:**  does
-not work inside a Capacitor WebView. There is no popup to open. Native sign-in
-needs a plugin — , or the native Google
-Sign-In SDK feeding . Budget a whole session for auth
+**The trap that will eat a session if you meet it cold:** `signInWithPopup` does
+not work inside a Capacitor WebView — there is no popup to open. Native sign-in
+needs a plugin: `@capacitor-firebase/authentication`, or the native Google
+Sign-In SDK feeding `signInWithCredential`. Budget a whole session for auth
 alone and treat it as the interesting part, not an obstacle.
 
 Second trap: add your signing key's SHA-256 fingerprint to the Android app in
