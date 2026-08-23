@@ -84,6 +84,54 @@ npm run lint
 
 ---
 
+## The automated gate
+
+A checklist depends on you remembering it, and you are least likely to remember
+it on the day you most need it. So the machine-checkable half is no longer your
+job. On every `git push` this repo runs lint, typecheck and tests, and refuses
+the push if any fail.
+
+What it catches without you thinking about it:
+
+| Check | Catches |
+| --- | --- |
+| `strict` + `noUncheckedIndexedAccess` | Undefined access, missing null handling — as compile errors, not runtime bugs |
+| `react/exhaustive-deps` | Stale values and infinite loops from effect dependencies |
+| `react/no-array-index-key`, `react/jsx-key` | Wrong-row edits after a reorder |
+| `react/rules-of-hooks` | Conditional hooks |
+| `eslint/no-console` | Leftover debug logs in the diff |
+| `npm test` | Every regression you have written a test for |
+
+After a fresh clone, turn the hook on — it lives in `.git/config`, which is not
+committed:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Emergency bypass is `git push --no-verify`. Use it twice in a month and that is
+data: log it in `BUGLOG.md` and find out what the gate is getting wrong.
+
+### What it still cannot check
+
+The hook prints these after it passes, because they are the half that produces
+most of your bugs and no tool can verify them:
+
+- Every statement in `STATEMENTS.md`, clicked through
+- Loading, empty and error states actually rendering
+- Blast radius — who else imports what you changed
+- The app's core paths still working
+
+### `BUGLOG.md`
+
+One line for every bug that escapes you. Ten seconds each. After about twenty
+entries your three recurring patterns are obvious, and each one gets promoted
+either into an automated check or to the top of the pre-push list.
+
+That loop is what turns a generic checklist into one that catches your bugs
+specifically.
+
+
 ## What I wrote / what's yours
 
 **Mine — plumbing. Don't rewrite unless it's wrong:**
@@ -95,6 +143,7 @@ npm run lint
 | `src/lib/firebase.ts` | Firebase init. Exports `auth`, `db`, `googleProvider`. |
 | `src/test/setup.ts` | Testing Library cleanup between tests |
 | `.env.example` | Config template |
+| `.oxlintrc.json`, `.githooks/pre-push` | The automated gate |
 
 **Yours — every line:**
 

@@ -1,0 +1,29 @@
+#!/bin/sh
+# Runs automatically on every `git push`. No memory required.
+# Bypass in a genuine emergency with: git push --no-verify
+
+set -e
+
+printf '\n\033[1m→ lint\033[0m\n'
+npm run lint
+
+printf '\n\033[1m→ typecheck + build\033[0m\n'
+npm run build
+
+printf '\n\033[1m→ tests\033[0m\n'
+npm test
+
+cat <<'REMINDER'
+
+────────────────────────────────────────────────────────
+The machine checked what it can. It cannot check these:
+
+  · Every statement in STATEMENTS.md, clicked through
+  · Loading / empty / error states actually render
+  · Blast radius — who else imports what you changed
+  · Core paths still work
+
+Fried and unsure? Do not push. Verify in the morning.
+────────────────────────────────────────────────────────
+
+REMINDER
