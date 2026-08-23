@@ -163,6 +163,38 @@ fails in production while working fine locally.
 
 *Done when:* it's on the internet and you use it for a real push.
 
+### 9 · Installable on the phone
+A web app manifest, icons, and a service worker (`vite-plugin-pwa`). Turn on
+Firestore offline persistence so a dropped connection is invisible instead of
+fatal.
+
+*Done when:* installed from Chrome on your phone, opens with no browser bar,
+and you can tick items in airplane mode and watch them sync when you land.
+
+### 10 · A real APK
+Capacitor wraps the same build in a native Android shell. Needs JDK 17+ and
+Android Studio — about 10GB of tooling, so install it before the session rather
+than during it.
+
+
+
+**The trap that will eat a session if you meet it cold:**  does
+not work inside a Capacitor WebView. There is no popup to open. Native sign-in
+needs a plugin — , or the native Google
+Sign-In SDK feeding . Budget a whole session for auth
+alone and treat it as the interesting part, not an obstacle.
+
+Second trap: add your signing key's SHA-256 fingerprint to the Android app in
+the Firebase console, or Google sign-in fails on the device while working
+everywhere else.
+
+*Cheaper fallback if Capacitor fights you:* Bubblewrap turns the deployed PWA
+into a Trusted Web Activity APK. Auth keeps working because it is really Chrome.
+You get a genuine installable APK for an afternoon's work — but it is a browser
+wrapper, so there is less to learn and less to talk about.
+
+*Done when:* the APK is on your phone, signed in, syncing with the web version.
+
 ---
 
 ## Tests
