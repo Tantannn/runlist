@@ -23,6 +23,7 @@ it('shows the edited name in read mode after Enter', async () => {
   const user = userEvent.setup()
   render(<Content />)
 
+  await user.click(screen.getByText('This is panel header 1'))
   await screen.findByText('John Brown')
   await user.dblClick(screen.getByText('John Brown'))
 
@@ -43,6 +44,7 @@ it('Escape discards the edit', async () => {
   const user = userEvent.setup()
   render(<Content />)
 
+  await user.click(screen.getByText('This is panel header 1'))
   await screen.findByText('Jim Green')
   await user.dblClick(screen.getByText('Jim Green'))
 

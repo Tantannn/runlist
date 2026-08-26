@@ -1,54 +1,87 @@
+import { DragDropProvider, type DragEndEvent } from '@dnd-kit/react'
+import { isSortable } from '@dnd-kit/react/sortable'
+import { useState } from 'react'
 import {
-  DragSortTable,
-  type ActionType,
-  type ProColumns,
-} from "@ant-design/pro-components";
-import { DragDropProvider } from "@dnd-kit/react";
-import { Collapse, message, Table } from "antd";
-import type { CollapseProps } from "antd/lib";
-import { useRef, useState, type Key } from "react";
-import DraggableCollapse from "./DraggableCollapse";
+  BLOCK_GROUP,
+  blockIdFromPanelGroup,
+  move,
+  type Block,
+} from './blocks'
+import DraggableCollapse from './DraggableCollapse'
+
+const text = `
+  A dog is a type of domesticated animal.
+  Known for its loyalty and faithfulness,
+  it can be found as a welcome guest in many households across the world.
+`
+
+const INITIAL_BLOCKS: Block[] = [
+  {
+    id: 'block-1',
+    label: 'First Collapse',
+    panels: [
+      { id: 'p1-1', label: 'This is panel header 1', kind: 'table' },
+      { id: 'p1-2', label: 'This is panel header 2', kind: 'text', text },
+      { id: 'p1-3', label: 'This is panel header 3', kind: 'text', text },
+    ],
+  },
+  {
+    id: 'block-2',
+    label: 'Second Collapse',
+    panels: [
+      { id: 'p2-1', label: 'Second panel header 1', kind: 'text', text },
+      { id: 'p2-2', label: 'Second panel header 2', kind: 'text', text },
+    ],
+  },
+]
 
 const Content = () => {
-  const [items, setItems] = useState([
-    { id: "1", label: "First Collapse", content: "Content for the first one." },
-    {
-      id: "2",
-      label: "Second Collapse",
-      content: "Content for the second one.",
-    },
-  ]);
-  const handleDragEnd = (event) => {
-    if (event.canceled) return;
+  const [blocks, setBlocks] = useState<Block[]>(INITIAL_BLOCKS)
 
-    const source = event.operation?.source;
-    if (source?.sortable) {
-      // The new API tracks the initial and final index for you
-      const { initialIndex, index: newIndex } = source.sortable;
+  /**
+   * One provider drives both nesting levels, so this handler dispatches on the
+   * source's sortable group: BLOCK_GROUP reorders the block list, a panel group
+   * reorders the panels of the block that group belongs to.
+   */
+  const handleDragEnd = (event: DragEndEvent) => {
+    if (event.canceled) return
 
-      if (initialIndex !== newIndex) {
-        setItems((prev) => {
-          const updated = [...prev];
-          const [movedItem] = updated.splice(initialIndex, 1);
-          updated.splice(newIndex, 0, movedItem);
-          return updated;
-        });
-      }
+    const source = event.operation.source
+    if (!isSortable(source)) return
+
+    const { group, initialIndex, index } = source.sortable
+    if (initialIndex === index) return
+
+    if (group === BLOCK_GROUP) {
+      setBlocks((prev) => move(prev, initialIndex, index))
+      return
     }
-  };
+
+    const blockId = blockIdFromPanelGroup(group)
+    if (!blockId) return
+
+    setBlocks((prev) =>
+      prev.map((block) =>
+        block.id === blockId
+          ? { ...block, panels: move(block.panels, initialIndex, index) }
+          : block,
+      ),
+    )
+  }
+
   return (
     <DragDropProvider onDragEnd={handleDragEnd}>
-      {items.map((item, index) => (
+      {blocks.map((block, index) => (
         <DraggableCollapse
-          // key={item.id}
-          id={item.id}
+          key={block.id}
+          id={block.id}
           index={index}
-          // label={item.label}
-        >
-        </DraggableCollapse>
+          label={block.label}
+          panels={block.panels}
+        />
       ))}
     </DragDropProvider>
-  );
-};
+  )
+}
 
-export default Content;
+export default Content
