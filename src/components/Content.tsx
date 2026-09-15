@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { type Block } from "./blocks";
-import { Tree } from "react-arborist";
-
+import { Tree, type NodeRendererProps } from "react-arborist";
 
 const INITIAL_BLOCKS: Block[] = [
   { id: "1", name: "Unread" },
@@ -23,16 +23,55 @@ const INITIAL_BLOCKS: Block[] = [
         id: "d2",
         name: "Bob",
         children: [
-          { id: "d1", name: "Alice" },
-          { id: "d2", name: "Bob" },
-          { id: "d3", name: "Charlie" },
+          { id: "d2-1", name: "Alice" },
+          { id: "d2-2", name: "Bob" },
+          { id: "d2-3", name: "Charlie" },
         ],
       },
-      { id: "d3", name: "Charlie" },
+      { id: "d4", name: "Charlie" },
     ],
   },
 ];
+
 const Content = () => {
+  const [checked, setChecked] = useState<Set<string>>(new Set());
+
+  const toggleChecked = (id: string) => {
+    setChecked((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const Node = ({ node, style, dragHandle }: NodeRendererProps<Block>) => {
+    const isTopLevel = node.level === 0;
+
+    return (
+      <div style={style} ref={dragHandle}>
+        {node.isInternal && (
+          <span
+            onClick={(e) => {
+              e.stopPropagation();
+              node.toggle();
+            }}
+          >
+            {node.isOpen ? "▾" : "▸"}
+          </span>
+        )}
+        {!isTopLevel && (
+          <input
+            type="checkbox"
+            checked={checked.has(node.id)}
+            onChange={() => toggleChecked(node.id)}
+            onClick={(e) => e.stopPropagation()}
+          />
+        )}
+        <span>{node.data.name}</span>
+      </div>
+    );
+  };
+
   return (
     <Tree
       initialData={INITIAL_BLOCKS}
@@ -45,7 +84,12 @@ const Content = () => {
       paddingTop={30}
       paddingBottom={10}
       padding={25 /* sets both */}
-    />
+      disableDrop={({ parentNode, dragNodes }) =>
+        !parentNode.isRoot && dragNodes.some((n) => n.level === 0)
+      }
+    >
+      {Node}
+    </Tree>
   );
 };
 
