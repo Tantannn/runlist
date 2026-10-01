@@ -20,8 +20,14 @@ const Content = () => {
     dropNode,
     dropPosition,
   }) => {
+    console.log(
+    dragNode,
+    dropNode,
+    dropPosition,
+    )
+    if (topLevelIds.has(String(dropNode.key))) return false;
     if (!topLevelIds.has(String(dragNode.key))) return true;
-    return dropPosition !== 0 && topLevelIds.has(String(dropNode.key));
+    return dropPosition !== 0  && topLevelIds.has(String(dropNode.key));
   };
 
   const handleDrop: TreeProps["onDrop"] = (info) => {
